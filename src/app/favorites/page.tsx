@@ -2,6 +2,14 @@ import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth/session';
 import { GifGrid } from '@/components/gif/GifGrid';
 import type { KlipyGif } from '@/lib/klipy/types';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'My Favorites — GifMeme',
+  robots: {
+    index: false,
+  },
+};
 
 const FAVORITES_LIMIT = 500;
 

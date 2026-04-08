@@ -2,11 +2,22 @@ import { CategoryClient } from '@/components/gif/CategoryClient';
 import { CategoryBar } from '@/components/gif/CategoryBar';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
 interface CategoryPageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const categoryName = formatCategoryName(slug);
+
+  return {
+    title: `${categoryName} GIFs — GifMeme`,
+    description: `Explore the best ${categoryName} GIFs and memes on GifMeme.`,
+  };
 }
 
 async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>> {

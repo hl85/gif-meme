@@ -1,6 +1,29 @@
 import { SearchInput } from '@/components/search/SearchInput';
 import { SearchClient } from '@/components/search/SearchClient';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
+import type { Metadata } from 'next';
+
+interface SearchPageProps {
+  searchParams: Promise<{ q?: string; type?: string }>;
+}
+
+export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const query = (params.q ?? '').trim();
+  const type = params.type === 'sticker' ? 'stickers' : 'GIFs';
+
+  if (!query) {
+    return {
+      title: 'Search — GifMeme',
+      description: 'Search for your favorite GIFs and stickers on GifMeme.',
+    };
+  }
+
+  return {
+    title: `Search results for "${query}" — GifMeme`,
+    description: `Browse ${type} search results for "${query}" on GifMeme.`,
+  };
+}
 
 async function fetchSearchResults(query: string, type: 'gif' | 'sticker'): Promise<KlipyPage<KlipyGif>> {
   if (!query) return { items: [], ads: [], page: 1, perPage: 20, hasNext: false };
@@ -15,10 +38,6 @@ async function fetchSearchResults(query: string, type: 'gif' | 'sticker'): Promi
   } catch {
     return { items: [], ads: [], page: 1, perPage: 20, hasNext: false };
   }
-}
-
-interface SearchPageProps {
-  searchParams: Promise<{ q?: string; type?: string }>;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {

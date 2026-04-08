@@ -1,5 +1,11 @@
 import { HomeClient } from '@/components/gif/HomeClient';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'GifMeme — Browse Trending GIFs & Stickers',
+  description: 'Discover and share the best trending GIFs and stickers on GifMeme.',
+};
 
 async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
   try {

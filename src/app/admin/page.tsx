@@ -9,6 +9,14 @@ import {
 } from '@/lib/analytics/queries';
 import { getSession } from '@/lib/auth/session';
 import { isAdmin } from '@/lib/auth/admin';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard — GifMeme',
+  robots: {
+    index: false,
+  },
+};
 
 function toISODate(d: Date): string {
   return d.toISOString().slice(0, 10);

@@ -15,8 +15,48 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
+  const { env } = await getCloudflareContext({ async: true });
+  const apiKey = env.KLIPY_API_KEY as string;
+  const kv = env.cache as KVNamespace;
+
+  if (!apiKey || !kv) {
+    return { title: 'GIF Detail — GifMeme' };
+  }
+
+  const provider = new KlipyProvider(apiKey, kv);
+  const gif = await provider.getById(id);
+
+  if (!gif) {
+    return { title: 'GIF Not Found — GifMeme' };
+  }
+
+  const title = `${gif.title || 'GIF'} — GifMeme`;
+  const description = `View and share this GIF on GifMeme.`;
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/gif/${id}`;
+
   return {
-    title: `GIF ${id} — GIF Meme`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      images: [
+        {
+          url: gif.url,
+          width: gif.width,
+          height: gif.height,
+          alt: gif.title || 'GIF',
+        },
+      ],
+      type: 'video.other',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [gif.url],
+    },
   };
 }
 
