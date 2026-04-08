@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { queryPVByDay, queryUVByDay, queryTopReferrers, queryPageStats } from '../queries';
+import { queryPVByDay, queryUVByDay, queryTopReferrers, queryPageStats, queryTopPages, queryTotals } from '../queries';
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -75,5 +75,29 @@ describe('Analytics Queries', () => {
     await expect(
       queryPVByDay('acc-123', 'token-456', '2024-01-01', '2024-01-02')
     ).rejects.toThrow('Analytics Engine query failed (400): Bad Request');
+  });
+
+  it('queryTopPages sends correct SQL query with LIMIT', async () => {
+    await queryTopPages('acc-123', 'token-456', '2024-01-01 00:00:00', '2024-01-02 00:00:00', 5);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: expect.stringContaining('LIMIT 5'),
+      })
+    );
+    const body = mockFetch.mock.calls[0][1].body as string;
+    expect(body).toContain('blob3 AS path');
+    expect(body).toContain('SUM(_sample_interval * double1) AS pv');
+    expect(body).toContain('COUNT(DISTINCT blob1) AS uv');
+  });
+
+  it('queryTotals sends a summary query without GROUP BY', async () => {
+    await queryTotals('acc-123', 'token-456', '2024-01-01 00:00:00', '2024-01-02 00:00:00');
+
+    const body = mockFetch.mock.calls[0][1].body as string;
+    expect(body).toContain('SUM(_sample_interval * double1) AS pv');
+    expect(body).toContain('COUNT(DISTINCT blob1) AS uv');
+    expect(body).not.toContain('GROUP BY');
   });
 });

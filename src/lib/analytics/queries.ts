@@ -118,3 +118,48 @@ FORMAT JSON
 
   return executeQuery(accountId, apiToken, query);
 }
+
+export async function queryTopPages(
+  accountId: string,
+  apiToken: string,
+  from: string,
+  to: string,
+  limit = 10
+) {
+  const query = `
+SELECT
+  blob3 AS path,
+  SUM(_sample_interval * double1) AS pv,
+  COUNT(DISTINCT blob1) AS uv
+FROM ${DATASET_NAME}
+WHERE
+  timestamp >= toDateTime('${from}')
+  AND timestamp < toDateTime('${to}')
+GROUP BY path
+ORDER BY pv DESC
+LIMIT ${limit}
+FORMAT JSON
+  `.trim();
+
+  return executeQuery(accountId, apiToken, query);
+}
+
+export async function queryTotals(
+  accountId: string,
+  apiToken: string,
+  from: string,
+  to: string
+) {
+  const query = `
+SELECT
+  SUM(_sample_interval * double1) AS pv,
+  COUNT(DISTINCT blob1) AS uv
+FROM ${DATASET_NAME}
+WHERE
+  timestamp >= toDateTime('${from}')
+  AND timestamp < toDateTime('${to}')
+FORMAT JSON
+  `.trim();
+
+  return executeQuery(accountId, apiToken, query);
+}
