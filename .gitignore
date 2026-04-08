@@ -127,7 +127,7 @@ dist
 # Build / Output directories for TypeScript
 dist/
 build/
-lib/
+/lib/
 out/
 
 # Cloudflare
