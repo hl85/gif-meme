@@ -69,6 +69,14 @@
   --nav-height: 48px;
   --page-padding-mobile: var(--space-6);   /* 24px */
   --page-padding-desktop: var(--space-12); /* 48px */
+
+  /* --- Breakpoints (reference values — use in @media queries) --- */
+  /* Mobile:  max-width: 640px  */
+  /* Tablet:  max-width: 1024px */
+  /* Desktop: min-width: 1025px */
+  --bp-mobile:  640px;
+  --bp-tablet:  1024px;
+  --bp-desktop: 1025px;
 }
 
 /* =============================================================
