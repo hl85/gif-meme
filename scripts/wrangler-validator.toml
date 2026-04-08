@@ -1,0 +1,7 @@
+name = "analytics-validator"
+main = "validate-analytics-worker.js"
+compatibility_date = "2024-01-01"
+
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "gifmeme_analytics"

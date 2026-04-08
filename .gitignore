@@ -83,11 +83,11 @@ web_modules/
 .parcel-cache
 
 # Next.js build output
-.next
+.next/
 out
 
 # Nuxt.js build / generate output
-.nuxt
+.nuxt/
 dist
 
 # Gatsby files
@@ -129,3 +129,8 @@ dist/
 build/
 lib/
 out/
+
+.open-next/
+.sisyphus/
+.wrangler/
+.wrangler-out/

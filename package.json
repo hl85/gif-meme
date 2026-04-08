@@ -1,0 +1,35 @@
+{
+  "name": "gif-meme",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "build:worker": "npx opennextjs-cloudflare build",
+    "preview": "npx opennextjs-cloudflare preview",
+    "deploy": "npx opennextjs-cloudflare deploy",
+    "test": "vitest",
+    "test:e2e": "npx playwright test"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "^1.0.0",
+    "drizzle-orm": "^0.40.0",
+    "jose": "^6.0.0",
+    "next": "^15.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250405.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@playwright/test": "^1.53.0",
+    "@vitest/ui": "^4.0.0",
+    "drizzle-kit": "^0.31.0",
+    "typescript": "^5.8.0",
+    "vitest": "^4.0.0",
+    "wrangler": "^4.0.0"
+  }
+}
