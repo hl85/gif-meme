@@ -1,0 +1,1 @@
+{"items":[{"id":"mock1","title":"Mock GIF","url":"https://example.com/mock.gif","preview_url":"https://example.com/mock.gif","width":200,"height":200,"source":"klipy"}],"ads":[{"type":"ad","id":"ad1","image_url":"https://example.com/ad.png","click_url":"https://example.com/click","impression_url":"","width":300,"height":250}],"page":1,"perPage":20,"hasNext":false}

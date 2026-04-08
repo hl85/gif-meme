@@ -1,0 +1,6 @@
+src/app/api/stickers/search/route.ts
+src/app/api/stickers/trending/route.ts
+src/app/api/gifs/search/route.ts
+src/app/api/gifs/trending/route.ts
+src/app/api/gifs/[id]/route.ts
+src/app/api/gifs/categories/route.ts
