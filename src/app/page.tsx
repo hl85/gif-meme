@@ -1,4 +1,3 @@
-import { Shell } from '@/components/layout/Shell';
 import { HomeClient } from '@/components/gif/HomeClient';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
 
@@ -39,19 +38,17 @@ export default async function Home() {
   const [trending, categories] = await Promise.all([fetchTrending(), fetchCategories()]);
 
   return (
-    <Shell>
-      <div className="home-page">
-        <header className="home-page__hero">
-          <h1 className="home-page__heading">gif.meme</h1>
-          <p className="home-page__sub">trending GIFs &amp; memes</p>
-        </header>
-        <HomeClient
-          initialGifs={trending.items}
-          initialAds={trending.ads}
-          initialHasNext={trending.hasNext}
-          categories={categories}
-        />
-      </div>
-    </Shell>
+    <div className="home-page">
+      <header className="home-page__hero">
+        <h1 className="home-page__heading">gif.meme</h1>
+        <p className="home-page__sub">trending GIFs &amp; memes</p>
+      </header>
+      <HomeClient
+        initialGifs={trending.items}
+        initialAds={trending.ads}
+        initialHasNext={trending.hasNext}
+        categories={categories}
+      />
+    </div>
   );
 }
