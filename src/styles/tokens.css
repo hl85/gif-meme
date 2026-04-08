@@ -1,1 +1,106 @@
-/* Design tokens will be added here in Task 7 */
+/* =============================================================
+   Design Tokens — GIF Meme
+   Source: rules/design.md
+   Visual language: terminal-inspired, data-dense, functional
+   ============================================================= */
+
+:root {
+  /* --- Backgrounds --- */
+  --bg-base:    #f9f9f8;
+  --bg-surface: #ffffff;
+
+  /* --- Borders --- */
+  --border-default: #e5e5e5;
+
+  /* --- Text --- */
+  --text-primary: #1a1a1a;
+  --text-muted:   #888888;
+  --text-faint:   #aaaaaa;
+
+  /* --- Brand --- */
+  --accent:        #22c55e;
+  --color-heading: #3ddc84;
+
+  /* --- Status levels — text colors --- */
+  --status-1: #16a34a;
+  --status-2: #22c55e;
+  --status-3: #ca8a04;
+  --status-4: #ea580c;
+  --status-5: #dc2626;
+  --status-6: #991b1b;
+
+  /* --- Status levels — badge backgrounds --- */
+  --status-1-bg: #dcfce7;
+  --status-2-bg: #f0fdf4;
+  --status-3-bg: #fef9c3;
+  --status-4-bg: #fff7ed;
+  --status-5-bg: #fef2f2;
+  --status-6-bg: #fdf2f2;
+
+  /* --- Category tag colors (outlined pills) --- */
+  --tag-community:  #8b5cf6;
+  --tag-permissive: #3b82f6;
+  --tag-vendor-a:   #0ea5e9;
+  --tag-vendor-b:   #f59e0b;
+
+  /* --- Typography --- */
+  --font-sans: var(--font-inter, 'Inter', system-ui, sans-serif);
+  --font-mono: ui-monospace, 'Fira Code', monospace;
+
+  /* --- Spacing (4px base grid) --- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+
+  /* --- Border radii --- */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-pill: 9999px;
+
+  /* --- Motion --- */
+  --transition-fast: 150ms ease;
+
+  /* --- Layout --- */
+  --content-max-width: 1100px;
+  --nav-height: 48px;
+  --page-padding-mobile: var(--space-6);   /* 24px */
+  --page-padding-desktop: var(--space-12); /* 48px */
+}
+
+/* =============================================================
+   Dark Mode Overrides
+   Applied via [data-theme="dark"] on <html>
+   ============================================================= */
+
+[data-theme="dark"] {
+  --bg-base:        #0f0f0f;
+  --bg-surface:     #1a1a1a;
+  --border-default: #2a2a2a;
+  --text-primary:   #e5e5e5;
+  --text-muted:     #666666;
+  --text-faint:     #444444;
+
+  /* Brand accent and heading stay vivid in dark mode */
+  --accent:        #22c55e;
+  --color-heading: #3ddc84;
+
+  /* Status badge backgrounds — darkened for dark mode legibility */
+  --status-1-bg: #052e16;
+  --status-2-bg: #0a1f12;
+  --status-3-bg: #1a1500;
+  --status-4-bg: #1a0e00;
+  --status-5-bg: #1a0000;
+  --status-6-bg: #1a0000;
+
+  /* Status text — slightly lighter for dark-bg contrast */
+  --status-1: #22c55e;
+  --status-2: #4ade80;
+  --status-3: #eab308;
+  --status-4: #f97316;
+  --status-5: #ef4444;
+  --status-6: #dc2626;
+}

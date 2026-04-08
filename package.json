@@ -8,8 +8,8 @@
     "build:worker": "npx opennextjs-cloudflare build",
     "preview": "npx opennextjs-cloudflare preview",
     "deploy": "npx opennextjs-cloudflare deploy",
-    "test": "vitest",
-    "test:e2e": "npx playwright test"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.0.0",

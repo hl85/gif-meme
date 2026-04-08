@@ -130,7 +130,13 @@ build/
 lib/
 out/
 
+# Cloudflare
 .open-next/
 .sisyphus/
 .wrangler/
 .wrangler-out/
+
+# Testing
+playwright-report/
+test-results/
+test-results*/
