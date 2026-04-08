@@ -26,6 +26,7 @@ export function FavoriteButton({
   const [favorited, setFavorited] = useState(initialFavorited);
   const [favId, setFavId] = useState<string | null>(initialFavoriteId);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleToggle() {
     if (!isAuthenticated) {
@@ -34,12 +35,15 @@ export function FavoriteButton({
     }
 
     setLoading(true);
+    setError(null);
     try {
       if (favorited && favId) {
         const res = await fetch(`/api/favorites/${favId}`, { method: 'DELETE' });
         if (res.ok || res.status === 204) {
           setFavorited(false);
           setFavId(null);
+        } else {
+          setError('Failed to remove');
         }
       } else {
         const res = await fetch('/api/favorites', {
@@ -51,27 +55,36 @@ export function FavoriteButton({
           const data = (await res.json()) as { id: string };
           setFavorited(true);
           setFavId(data.id);
+        } else {
+          setError('Failed to save');
         }
       }
+    } catch (err) {
+      setError('Error');
     } finally {
       setLoading(false);
+      if (error) {
+        setTimeout(() => setError(null), 3000);
+      }
     }
   }
 
   return (
-    <button
-      className={`fav-btn${favorited ? ' fav-btn--active' : ''}`}
-      onClick={handleToggle}
-      disabled={loading}
-      aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
-      aria-pressed={favorited}
-    >
-      <span className="fav-btn__icon" aria-hidden="true">
-        {favorited ? '♥' : '♡'}
-      </span>
-      <span className="fav-btn__label">
-        {loading ? '…' : favorited ? 'Saved' : 'Save'}
-      </span>
-    </button>
+    <div className="fav-btn-container">
+      <button
+        className={`fav-btn${favorited ? ' fav-btn--active' : ''}${error ? ' fav-btn--error' : ''}`}
+        onClick={handleToggle}
+        disabled={loading}
+        aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
+        aria-pressed={favorited}
+      >
+        <span className="fav-btn__icon" aria-hidden="true">
+          {error ? '!' : favorited ? '♥' : '♡'}
+        </span>
+        <span className="fav-btn__label">
+          {loading ? '…' : error ? error : favorited ? 'Saved' : 'Save'}
+        </span>
+      </button>
+    </div>
   );
 }

@@ -19,36 +19,15 @@ export function HomeClient({ initialGifs, initialAds, initialHasNext, categories
   const [hasNext, setHasNext] = useState(initialHasNext);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  const handleCategorySelect = async (category: string | null) => {
-    setSelectedCategory(category);
-    setPage(1);
-    setIsLoading(true);
-    try {
-      const url = category
-        ? `/api/gifs/search?q=${encodeURIComponent(category)}&page=1`
-        : '/api/gifs/trending?page=1';
-      const res = await fetch(url);
-      if (res.ok) {
-        const data: KlipyPage<KlipyGif> = await res.json();
-        setGifs(data.items);
-        setAds(data.ads);
-        setHasNext(data.hasNext);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [error, setError] = useState<string | null>(null);
 
   const handleLoadMore = async () => {
     if (isLoading) return;
     setIsLoading(true);
+    setError(null);
     const nextPage = page + 1;
     try {
-      const url = selectedCategory
-        ? `/api/gifs/search?q=${encodeURIComponent(selectedCategory)}&page=${nextPage}`
-        : `/api/gifs/trending?page=${nextPage}`;
+      const url = `/api/gifs/trending?page=${nextPage}`;
       const res = await fetch(url);
       if (res.ok) {
         const data: KlipyPage<KlipyGif> = await res.json();
@@ -56,7 +35,11 @@ export function HomeClient({ initialGifs, initialAds, initialHasNext, categories
         setAds(data.ads);
         setHasNext(data.hasNext);
         setPage(nextPage);
+      } else {
+        setError('Failed to load more trending GIFs.');
       }
+    } catch (err) {
+      setError('An error occurred while loading more GIFs.');
     } finally {
       setIsLoading(false);
     }
@@ -66,9 +49,13 @@ export function HomeClient({ initialGifs, initialAds, initialHasNext, categories
     <div className="home">
       <CategoryBar
         categories={categories}
-        selected={selectedCategory}
-        onSelect={handleCategorySelect}
+        selected={null}
       />
+      {error && (
+        <div className="home-error" data-testid="home-error">
+          <p className="home-error__text">{error}</p>
+        </div>
+      )}
       <GifGrid gifs={gifs} ads={ads} />
       <LoadMore onLoadMore={handleLoadMore} hasMore={hasNext} isLoading={isLoading} />
     </div>
