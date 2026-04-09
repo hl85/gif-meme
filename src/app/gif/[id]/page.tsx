@@ -7,6 +7,8 @@ import { favorites } from '@/lib/db/schema';
 import { KlipyProvider } from '@/lib/klipy/provider';
 import { FavoriteButton } from '@/components/gif/FavoriteButton';
 import { CopyUrlButton } from '@/components/gif/CopyUrlButton';
+import { EmbedCodeButton } from '@/components/gif/EmbedCodeButton';
+import { getCanonicalBaseUrl } from '@/lib/runtime/base-url';
 import type { Metadata } from 'next';
 
 interface PageProps {
@@ -32,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = `${gif.title || 'GIF'} — GifMeme`;
   const description = `View and share this GIF on GifMeme.`;
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/gif/${id}`;
+  const url = `${getCanonicalBaseUrl()}/gif/${id}`;
 
   return {
     title,
@@ -106,7 +108,8 @@ export default async function GifDetailPage({ params }: PageProps) {
     }
   }
 
-  const pageUrl = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/gif/${id}`;
+  const baseUrl = getCanonicalBaseUrl();
+  const embedUrl = `${baseUrl}/embed/${id}`;
 
   return (
     <article className="gif-detail">
@@ -137,7 +140,13 @@ export default async function GifDetailPage({ params }: PageProps) {
             isAuthenticated={isAuthenticated}
           />
 
-          <CopyUrlButton url={pageUrl} />
+          <EmbedCodeButton embedUrl={embedUrl} />
+
+          <CopyUrlButton
+            url={gif.url}
+            label="Copy GIF URL"
+            ariaLabel="Copy source GIF URL"
+          />
         </div>
 
         <dl className="gif-detail__meta">
