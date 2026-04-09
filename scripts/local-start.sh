@@ -31,14 +31,16 @@ ensure_file() {
   fi
 }
 
-find_available_port() {
+kill_port_process() {
   local port="$1"
+  local pids
 
-  while lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; do
-    port="$((port + 1))"
-  done
-
-  printf '%s' "$port"
+  pids=$(lsof -t -iTCP:"$port" -sTCP:LISTEN || true)
+  if [[ -n "$pids" ]]; then
+    echo "Port $port is busy. Killing processes: $pids"
+    kill -9 $pids 2>/dev/null || true
+    sleep 1 # Wait for port to be released
+  fi
 }
 
 run_d1_json() {
@@ -82,12 +84,8 @@ set -a
 . "$ENV_FILE"
 set +a
 
-SELECTED_PORT="$(find_available_port "$DEFAULT_PORT")"
-
-if [[ "$SELECTED_PORT" != "$DEFAULT_PORT" ]]; then
-  echo "Port $DEFAULT_PORT is busy, using $SELECTED_PORT instead."
-  echo "If Google OAuth is restricted to localhost:$DEFAULT_PORT, add localhost:$SELECTED_PORT as an authorized redirect origin/URI before testing login."
-fi
+kill_port_process "$DEFAULT_PORT"
+SELECTED_PORT="$DEFAULT_PORT"
 
 export LOCAL_PORT="$SELECTED_PORT"
 export NEXT_PUBLIC_APP_URL="http://localhost:$SELECTED_PORT"
