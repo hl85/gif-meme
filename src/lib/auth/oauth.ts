@@ -1,3 +1,5 @@
+import { getAppBaseUrl } from '@/lib/runtime/base-url';
+
 export interface GoogleTokenResponse {
   access_token: string;
   id_token: string;
@@ -19,7 +21,7 @@ export interface GoogleUser {
 }
 
 function getRedirectUri() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const appUrl = getAppBaseUrl();
   return `${appUrl}/api/auth/callback`;
 }
 
