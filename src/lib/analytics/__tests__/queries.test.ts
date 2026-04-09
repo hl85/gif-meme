@@ -60,7 +60,7 @@ describe('Analytics Queries', () => {
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        body: expect.stringContaining("blob3 = '/search'"),
+        body: expect.stringContaining("blob2 = '/search'"),
       })
     );
   });
@@ -87,9 +87,17 @@ describe('Analytics Queries', () => {
       })
     );
     const body = mockFetch.mock.calls[0][1].body as string;
-    expect(body).toContain('blob3 AS path');
+    expect(body).toContain('blob2 AS path');
     expect(body).toContain('SUM(_sample_interval * double1) AS pv');
     expect(body).toContain('COUNT(DISTINCT blob1) AS uv');
+  });
+
+  it('queryTopReferrers reads the referrer blob column', async () => {
+    await queryTopReferrers('acc-123', 'token-456', '2024-01-01 00:00:00', '2024-01-02 00:00:00', 5);
+
+    const body = mockFetch.mock.calls[0][1].body as string;
+    expect(body).toContain('blob3 AS referrer');
+    expect(body).toContain("AND blob3 != ''");
   });
 
   it('queryTotals sends a summary query without GROUP BY', async () => {

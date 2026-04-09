@@ -81,13 +81,13 @@ export async function queryTopReferrers(
 ) {
   const query = `
 SELECT
-  blob2 AS referrer,
+  blob3 AS referrer,
   SUM(_sample_interval) AS count
 FROM ${DATASET_NAME}
 WHERE
   timestamp >= toDateTime('${from}')
   AND timestamp < toDateTime('${to}')
-  AND blob2 != ''
+  AND blob3 != ''
 GROUP BY referrer
 ORDER BY count DESC
 LIMIT ${limit}
@@ -110,7 +110,7 @@ SELECT
   COUNT(DISTINCT blob1) AS uv
 FROM ${DATASET_NAME}
 WHERE
-  blob3 = '${path}'
+  blob2 = '${path}'
   AND timestamp >= toDateTime('${from}')
   AND timestamp < toDateTime('${to}')
 FORMAT JSON
@@ -128,7 +128,7 @@ export async function queryTopPages(
 ) {
   const query = `
 SELECT
-  blob3 AS path,
+  blob2 AS path,
   SUM(_sample_interval * double1) AS pv,
   COUNT(DISTINCT blob1) AS uv
 FROM ${DATASET_NAME}
