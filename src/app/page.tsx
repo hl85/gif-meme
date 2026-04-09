@@ -1,5 +1,6 @@
 import { HomeClient } from '@/components/gif/HomeClient';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
+import { toAppUrl } from '@/lib/runtime/base-url';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 
 async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
   try {
-    const res = await fetch('http://localhost:8787/api/gifs/trending?page=1', {
+    const res = await fetch(toAppUrl('/api/gifs/trending?page=1'), {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('fetch failed');
@@ -21,7 +22,7 @@ async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
 
 async function fetchCategories(): Promise<string[]> {
   try {
-    const res = await fetch('http://localhost:8787/api/gifs/categories', {
+    const res = await fetch(toAppUrl('/api/gifs/categories'), {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error('fetch failed');

@@ -1,6 +1,7 @@
 import { SearchInput } from '@/components/search/SearchInput';
 import { SearchClient } from '@/components/search/SearchClient';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
+import { toAppUrl } from '@/lib/runtime/base-url';
 import type { Metadata } from 'next';
 
 interface SearchPageProps {
@@ -30,7 +31,7 @@ async function fetchSearchResults(query: string, type: 'gif' | 'sticker'): Promi
   try {
     const endpoint = type === 'gif' ? '/api/gifs/search' : '/api/stickers/search';
     const res = await fetch(
-      `http://localhost:8787${endpoint}?q=${encodeURIComponent(query)}&page=1`,
+      toAppUrl(`${endpoint}?q=${encodeURIComponent(query)}&page=1`),
       { cache: 'no-store' }
     );
     if (!res.ok) throw new Error('fetch failed');

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth/session';
 import { GifGrid } from '@/components/gif/GifGrid';
 import type { KlipyGif } from '@/lib/klipy/types';
+import { toAppUrl } from '@/lib/runtime/base-url';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ function favoriteToGif(item: FavoriteItem): KlipyGif {
 async function fetchFavorites(perPage = 50): Promise<{ items: FavoriteItem[]; total: number }> {
   try {
     const res = await fetch(
-      `http://localhost:8787/api/favorites?page=1&per_page=${perPage}`,
+      toAppUrl(`/api/favorites?page=1&per_page=${perPage}`),
       { cache: 'no-store' }
     );
     if (!res.ok) return { items: [], total: 0 };

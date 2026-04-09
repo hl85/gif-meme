@@ -1,9 +1,14 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { GifGrid } from '../GifGrid';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import type { KlipyGif, KlipyAd } from '@/lib/klipy/types';
+
+vi.mock('@/lib/utils/clipboard', () => ({
+  copyToClipboard: vi.fn(),
+}));
 
 vi.mock('@/components/ads/AdSlot', () => ({
   AdSlot: ({ index }: { index: number }) => (
@@ -40,6 +45,8 @@ const mockAds: KlipyAd[] = [
 ];
 
 afterEach(() => {
+  vi.useRealTimers();
+  vi.clearAllMocks();
   cleanup();
 });
 
@@ -73,5 +80,44 @@ describe('GifGrid', () => {
     const gifs = [makeGif(1)];
     render(<GifGrid gifs={gifs} ads={[]} onGifClick={handleClick} />);
     expect(screen.getByTestId('mock-gif-card-gif-1')).toBeInTheDocument();
+  });
+
+  it('renders share buttons for each gif card', () => {
+    const gifs = [makeGif(1)];
+    render(<GifGrid gifs={gifs} ads={[]} />);
+
+    expect(screen.getByLabelText('Copy link for GIF 1')).toBeInTheDocument();
+    expect(screen.getByLabelText('Copy GIF URL for GIF 1')).toBeInTheDocument();
+  });
+
+  it('copies the GIF detail path', async () => {
+    vi.mocked(copyToClipboard).mockResolvedValue(true);
+    const gifs = [makeGif(1)];
+    render(<GifGrid gifs={gifs} ads={[]} />);
+
+    fireEvent.click(screen.getByLabelText('Copy link for GIF 1'));
+
+    await waitFor(() => {
+      expect(copyToClipboard).toHaveBeenCalledWith('/gif/gif-1');
+    });
+  });
+
+  it('shows temporary copied feedback after a successful copy', async () => {
+    vi.useFakeTimers();
+    vi.mocked(copyToClipboard).mockResolvedValue(true);
+    const gifs = [makeGif(1)];
+    render(<GifGrid gifs={gifs} ads={[]} />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByLabelText('Copy GIF URL for GIF 1'));
+    });
+
+    expect(screen.getByText('Copied!')).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+
+    expect(screen.queryByText('Copied!')).not.toBeInTheDocument();
   });
 });
