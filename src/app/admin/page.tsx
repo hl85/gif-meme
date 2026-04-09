@@ -133,6 +133,11 @@ export default async function AdminDashboardPage({ searchParams }: AdminDashboar
     <div className="admin-page">
       <div className="admin-page__top">
         <h1 className="admin-page__title">Analytics</h1>
+        <nav className="admin-main-nav" aria-label="Admin navigation">
+          <Link href="/admin/categories" className="admin-main-nav__link">
+            Categories
+          </Link>
+        </nav>
         <nav className="admin-range-nav" aria-label="Date range">
           <Link
             href="/admin?range=7"
