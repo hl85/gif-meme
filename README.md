@@ -52,8 +52,8 @@ wrangler.toml          # Cloudflare Workers 配置
 - **Node.js 20+**
 - **npm**
 - **Wrangler 4+**
-- 一个 **Cloudflare 账号**
-- 一个 **Google OAuth 应用**
+- 一个 **Cloudflare 账号** （Done, 已经配置好 MCP API 密钥）
+- 一个 **Google OAuth 应用** （Done, 已经配置好客户端 ID 和密钥）
 - 一个 **Klipy API Key**
 
 推荐额外准备：
@@ -143,19 +143,42 @@ wrangler d1 execute gifmeme-db --file=drizzle/0000_perfect_photon.sql --remote
 
 ### 4. 设置本地环境变量 / secrets
 
-为了保证本地预览和应用逻辑正常工作，请准备以下变量：
+本地开发请使用**本地文件**，不要手动 `export`，也不要把真实凭据写进仓库。
+
+先复制模板：
 
 ```bash
-export GOOGLE_CLIENT_ID="..."
-export GOOGLE_CLIENT_SECRET="..."
-export JWT_SECRET="..."
-export KLIPY_API_KEY="..."
-export ADMIN_EMAILS="admin@example.com"
-export NEXT_PUBLIC_APP_URL="http://localhost:8787"
-export NEXT_PUBLIC_BASE_URL="http://localhost:8787"
-export CF_ACCOUNT_ID="..."
-export CF_ANALYTICS_TOKEN="..."
+cp .env.local.example .env.local
+cp .dev.vars.example .dev.vars
 ```
+
+然后把真实值填进这两个本地文件中：
+
+- `.env.local`：给 Next.js / 本地脚本使用
+- `.dev.vars`：给 `wrangler dev` 的本地 Worker secrets 使用
+
+推荐至少填写：
+
+```dotenv
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+JWT_SECRET=...
+KLIPY_API_KEY=...
+ADMIN_EMAILS=admin@example.com,another-admin@example.com
+LOCAL_PORT=8787
+NEXT_PUBLIC_APP_URL=http://localhost:8787
+NEXT_PUBLIC_BASE_URL=http://localhost:8787
+PLAYWRIGHT_BASE_URL=http://localhost:8787
+```
+
+可选统计变量：
+
+```dotenv
+CF_ACCOUNT_ID=...
+CF_ANALYTICS_TOKEN=...
+```
+
+> 注意：Wrangler 本地开发建议在 `.dev.vars` 和 `.env` / `.env.local` 方案中保持职责清晰。此仓库默认使用 `.dev.vars` 承载 Worker 本地 secrets，使用 `.env.local` 承载本地运行配置。
 
 对于 Cloudflare 托管运行环境，生产 secrets 通过 Wrangler 设置：
 
@@ -170,6 +193,25 @@ npx wrangler secret put ADMIN_EMAILS
 ---
 
 ## 本地开发
+
+### 一键完整联调（推荐）
+
+```bash
+npm run local:start
+```
+
+这个脚本会自动完成：
+
+1. 检查并补齐 `.env.local` / `.dev.vars`
+2. 自动寻找可用端口（默认从 `8787` 开始）
+3. 构建 OpenNext Worker
+4. 初始化本地 D1 持久化目录
+5. 幂等执行 `drizzle/*.sql` migration（已执行过的会跳过）
+6. 启动 `wrangler dev`
+
+如果 `8787` 已被占用，脚本会自动切换到下一个可用端口，并同步更新运行时使用的本地 URL。
+
+> Google OAuth 注意：如果脚本因为端口冲突切换到了新端口，你需要把新的 `http://localhost:PORT/api/auth/callback` 加到 Google OAuth 应用的 authorized redirect URI 里，否则登录回调会失败。
 
 ### 快速 UI 开发
 
@@ -241,6 +283,8 @@ npx tsc --noEmit
 npx vitest run
 npx opennextjs-cloudflare build
 ```
+
+如果你使用一键联调脚本，本地地址会和 `LOCAL_PORT` / `PLAYWRIGHT_BASE_URL` 保持一致。
 
 如果还需要验证浏览器真实流程：
 
@@ -358,6 +402,50 @@ curl -s -o /dev/null -w "%{http_code}" https://gifmeme.org/admin
 
 ---
 
+## Admin Operations Guide
+
+本节用于管理员日常维护分类和分类卡片配置。
+
+### 1. 访问分类管理页面
+
+- 入口地址：`/admin/categories`
+- 建议先完成管理员登录，再直接访问该路径
+
+### 2. 分类 CRUD 字段说明
+
+在分类创建和编辑时，重点维护以下字段：
+
+- `slug`：分类 URL 标识，建议使用短横线连接英文词（如 `cat-memes`）
+- `label`：分类展示名称
+- `searchQuery`：用于内容源检索的关键词
+- SEO 字段：用于分类页搜索引擎信息（通常包含 title、description、keywords）
+- `sortOrder`：分类排序值，数字越小越靠前
+
+常见操作流程：
+
+1. 新建分类，填写以上字段后保存
+2. 在分类列表中编辑已有分类并更新字段
+3. 删除不再使用的分类
+
+### 3. 分类卡片注入（Card Injection）
+
+每个分类都可配置注入卡片，核心字段如下：
+
+- `position`：注入位置
+- `imageUrl`：卡片图片地址
+- `imageName`：卡片图片名称或描述
+- `linkUrl`：卡片跳转链接
+
+`position` 采用 **0-based** 编号：
+
+- `0` 表示第 1 个位置
+- `1` 表示第 2 个位置
+- `5` 表示第 6 个位置
+
+卡片插入后，原有内容会按顺序后移。
+
+---
+
 ## 本地运行注意事项
 
 - 若干服务端页面会请求 `http://localhost:8787`
@@ -372,6 +460,9 @@ curl -s -o /dev/null -w "%{http_code}" https://gifmeme.org/admin
 ```bash
 # 安装依赖
 npm install
+
+# 一键完整本地联调（含本地 D1 初始化）
+npm run local:start
 
 # Next.js 本地开发
 npm run dev
