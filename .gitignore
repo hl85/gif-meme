@@ -140,3 +140,7 @@ out/
 playwright-report/
 test-results/
 test-results*/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+screenshots/

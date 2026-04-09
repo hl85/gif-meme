@@ -9,6 +9,11 @@ compatibility_flags = ["nodejs_compat"]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
+# Production route
+routes = [
+  { pattern = "gifmeme.org/*", zone_name = "gifmeme.org" }
+]
+
 [[d1_databases]]
 binding = "main-db"
 database_name = "gifmeme-db"
