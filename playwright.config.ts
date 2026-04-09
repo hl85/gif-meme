@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const localPort = process.env.LOCAL_PORT?.trim() || '8787';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL?.trim() || process.env.NEXT_PUBLIC_BASE_URL?.trim() || `http://localhost:${localPort}`;
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -8,7 +11,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:8787',
+    baseURL,
     trace: 'on-first-retry',
   },
   projects: [
