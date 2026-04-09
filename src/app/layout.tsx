@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Shell } from "@/components/layout/Shell";
+import { getSession } from "@/lib/auth/session";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,16 +16,18 @@ export const metadata: Metadata = {
   description: "Create and share GIF memes",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.variable}>
         <ThemeProvider>
-          <Shell>{children}</Shell>
+          <Shell session={session}>{children}</Shell>
         </ThemeProvider>
       </body>
     </html>

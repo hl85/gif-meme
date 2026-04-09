@@ -4,6 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTheme } from "./ThemeProvider";
 import { SearchInput } from "@/components/search/SearchInput";
+import { LoginDialog } from "@/components/auth/LoginDialog";
+import { Logo } from "@/components/brand/Logo";
+import type { SessionPayload } from "@/lib/auth/jwt";
 
 interface NavLink {
   href: string;
@@ -17,15 +20,18 @@ const NAV_LINKS: NavLink[] = [
   { href: "/favorites", label: "favorites" },
 ];
 
-export function Header() {
+export function Header({ session }: { session?: SessionPayload | null }) {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+
+  const isAuthenticated = !!session;
 
   return (
     <header className="site-header" role="banner">
       <div className="site-header__inner">
         <Link href="/" className="site-header__brand" aria-label="GIF Meme home">
-          <span className="site-header__brand-icon" aria-hidden="true">▶</span>
+          <Logo size={32} />
           <span className="site-header__brand-name">gif-meme</span>
         </Link>
 
@@ -59,6 +65,19 @@ export function Header() {
         >
           {theme === "light" ? "◑" : "◐"}
         </button>
+
+        {!isAuthenticated && (
+          <button
+            className="site-header__login-button"
+            onClick={() => setLoginDialogOpen(true)}
+            aria-label="Sign in"
+            title="Sign in"
+          >
+            [sign in]
+          </button>
+        )}
+
+        <LoginDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen} />
 
         <button
           className="site-header__mobile-toggle"

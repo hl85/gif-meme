@@ -69,6 +69,8 @@
   --nav-height: 48px;
   --page-padding-mobile: var(--space-6);   /* 24px */
   --page-padding-desktop: var(--space-12); /* 48px */
+  --dialog-max-width: 28rem;
+  --overlay-scrim: rgba(15, 15, 15, 0.56);
 
   /* --- Breakpoints (reference values — use in @media queries) --- */
   /* Mobile:  max-width: 640px  */
@@ -103,6 +105,7 @@
   --status-4-bg: #1a0e00;
   --status-5-bg: #1a0000;
   --status-6-bg: #1a0000;
+  --overlay-scrim: rgba(0, 0, 0, 0.72);
 
   /* Status text — slightly lighter for dark-bg contrast */
   --status-1: #22c55e;

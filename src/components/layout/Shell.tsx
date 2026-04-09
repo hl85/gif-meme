@@ -4,8 +4,15 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import type { SessionPayload } from "@/lib/auth/jwt";
 
-export function Shell({ children }: { children: ReactNode }) {
+export function Shell({ 
+  children,
+  session
+}: { 
+  children: ReactNode;
+  session?: SessionPayload | null;
+}) {
   const pathname = usePathname();
   const isEmbedRoute = pathname.startsWith("/embed/");
 
@@ -15,7 +22,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="shell">
-      <Header />
+      <Header session={session} />
       <main className="shell__main" id="main-content">
         {children}
       </main>

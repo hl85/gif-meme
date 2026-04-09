@@ -1,0 +1,44 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 32 32"
+  role="img"
+  aria-labelledby="logo-title logo-desc"
+  shape-rendering="crispEdges"
+>
+  <title id="logo-title">gif-meme pixel gremlin logo</title>
+  <desc id="logo-desc">A square pixel-art terminal gremlin mascot with two rectangular eyes and centered pupils.</desc>
+
+  <rect x="14" y="1" width="4" height="2" fill="#15803d"/>
+  <rect x="8" y="3" width="4" height="2" fill="#15803d"/>
+  <rect x="20" y="3" width="4" height="2" fill="#15803d"/>
+
+  <rect x="6" y="5" width="20" height="2" fill="#1a1a1a"/>
+  <rect x="4" y="7" width="24" height="14" fill="#1a1a1a"/>
+  <rect x="6" y="21" width="20" height="6" fill="#1a1a1a"/>
+  <rect x="10" y="27" width="12" height="2" fill="#1a1a1a"/>
+
+  <rect x="6" y="7" width="20" height="4" fill="#15803d"/>
+  <rect x="6" y="11" width="20" height="10" fill="#22c55e"/>
+  <rect x="8" y="21" width="16" height="4" fill="#22c55e"/>
+  <rect x="10" y="25" width="12" height="2" fill="#15803d"/>
+
+  <rect x="8" y="8" width="4" height="1" fill="#86efac"/>
+  <rect x="20" y="8" width="4" height="1" fill="#86efac"/>
+
+  <g id="left-eye">
+    <rect x="6" y="9" width="9" height="8" fill="#1a1a1a"/>
+    <rect id="left-eye-socket" x="7" y="10" width="7" height="6" fill="#f9f9f8"/>
+    <rect id="left-pupil" x="9" y="12" width="3" height="3" fill="#1a1a1a"/>
+  </g>
+
+  <g id="right-eye">
+    <rect x="17" y="9" width="9" height="8" fill="#1a1a1a"/>
+    <rect id="right-eye-socket" x="18" y="10" width="7" height="6" fill="#f9f9f8"/>
+    <rect id="right-pupil" x="20" y="12" width="3" height="3" fill="#1a1a1a"/>
+  </g>
+
+  <rect x="15" y="17" width="2" height="2" fill="#1a1a1a"/>
+
+  <rect x="11" y="22" width="10" height="2" fill="#f9f9f8"/>
+  <rect x="15" y="22" width="2" height="2" fill="#22c55e"/>
+</svg>
