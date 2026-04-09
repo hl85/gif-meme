@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>> {
   try {
     const res = await fetch(`http://localhost:8787/api/gifs/search?q=${encodeURIComponent(category)}&page=1`, {
-      next: { revalidate: 600 },
+      cache: 'no-store',
     });
     if (!res.ok) throw new Error('fetch failed');
     return res.json();
@@ -36,7 +36,7 @@ async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>>
 async function fetchCategories(): Promise<string[]> {
   try {
     const res = await fetch('http://localhost:8787/api/gifs/categories', {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
     if (!res.ok) throw new Error('fetch failed');
     const data = await res.json() as Record<string, unknown>;

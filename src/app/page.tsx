@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
   try {
     const res = await fetch('http://localhost:8787/api/gifs/trending?page=1', {
-      next: { revalidate: 300 },
+      cache: 'no-store',
     });
     if (!res.ok) throw new Error('fetch failed');
     return res.json();
@@ -22,7 +22,7 @@ async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
 async function fetchCategories(): Promise<string[]> {
   try {
     const res = await fetch('http://localhost:8787/api/gifs/categories', {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     });
     if (!res.ok) throw new Error('fetch failed');
     const data = await res.json() as Record<string, unknown>;
