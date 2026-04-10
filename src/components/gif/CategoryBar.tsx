@@ -14,6 +14,10 @@ interface CategoryBarProps {
 }
 
 export function CategoryBar({ categories, selected, onSelect }: CategoryBarProps) {
+  if (!categories || categories.length === 0) {
+    return null;
+  }
+
   return (
     <div className="category-bar" data-testid="category-bar">
       <span className="category-bar__prefix">Categories</span>

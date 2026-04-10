@@ -57,6 +57,6 @@ describe('CategoryBar', () => {
 
   it('renders nothing when categories is empty', () => {
     render(<CategoryBar categories={[]} selected={null} onSelect={() => {}} />);
-    expect(screen.getByTestId('category-bar').children).toHaveLength(0);
+    expect(screen.queryByTestId('category-bar')).not.toBeInTheDocument();
   });
 });
