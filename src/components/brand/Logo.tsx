@@ -33,7 +33,7 @@ function getPupilOffset(
   };
 }
 
-export function Logo({ size = 32, className, label = "gif-meme logo" }: LogoProps) {
+export function Logo({ size = 32, className, label = "GifMeme logo" }: LogoProps) {
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const { mousePosition, prefersReducedMotion, isFinePointer } = useMouseTracking();
   const [hovered, setHovered] = useState(false);

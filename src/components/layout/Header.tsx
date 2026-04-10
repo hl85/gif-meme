@@ -71,7 +71,7 @@ export function Header({ session }: { session?: SessionPayload | null }) {
       <div className="site-header__inner">
         <Link href="/" className="site-header__brand" aria-label="GIF Meme home">
           <Logo size={32} />
-          <span className="site-header__brand-name">gif-meme</span>
+          <span className="site-header__brand-name">GifMeme</span>
         </Link>
 
         <div className="site-header__search">

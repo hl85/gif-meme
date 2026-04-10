@@ -50,6 +50,6 @@ describe("THEME_STORAGE_KEY", () => {
   });
 
   it("contains project namespace to avoid collisions", () => {
-    expect(THEME_STORAGE_KEY).toContain("gif-meme");
+    expect(THEME_STORAGE_KEY).toContain("GifMeme");
   });
 });

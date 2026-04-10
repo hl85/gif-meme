@@ -60,7 +60,7 @@ describe("Logo", () => {
   it("renders at the requested size", () => {
     render(<Logo size={48} />);
 
-    const svg = screen.getByRole("img", { name: "gif-meme logo" });
+    const svg = screen.getByRole("img", { name: "GifMeme logo" });
     expect(svg).toHaveAttribute("width", "48");
     expect(svg).toHaveAttribute("height", "48");
   });

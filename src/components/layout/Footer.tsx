@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="site-footer" role="contentinfo">
       <div className="site-footer__inner">
         <span className="site-footer__copy">
-          © {year} gif-meme
+          © {year} GifMeme
         </span>
         <span className="site-footer__sep" aria-hidden="true">·</span>
         <span className="site-footer__tagline">gifs for every occasion</span>

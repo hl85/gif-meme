@@ -5,7 +5,7 @@
   aria-labelledby="logo-title logo-desc"
   shape-rendering="crispEdges"
 >
-  <title id="logo-title">gif-meme pixel gremlin logo</title>
+  <title id="logo-title">GifMeme pixel gremlin logo</title>
   <desc id="logo-desc">A square pixel-art terminal gremlin mascot with two rectangular eyes and centered pupils.</desc>
 
   <rect x="14" y="1" width="4" height="2" fill="#15803d"/>
