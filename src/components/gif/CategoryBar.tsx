@@ -2,50 +2,47 @@
 
 import Link from 'next/link';
 
-interface CategoryBarProps {
-  categories: string[];
-  selected: string | null;
-  onSelect?: (category: string | null) => void;
+export interface CategoryItem {
+  slug: string;
+  label: string;
 }
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '');
+interface CategoryBarProps {
+  categories: CategoryItem[];
+  selected: string | null;
+  onSelect?: (category: string | null) => void;
 }
 
 export function CategoryBar({ categories, selected, onSelect }: CategoryBarProps) {
   return (
     <div className="category-bar" data-testid="category-bar">
       {categories.map((cat) => {
-        const isActive = selected === cat;
-        const slug = slugify(cat);
+        const isActive = selected === cat.slug;
         
         if (onSelect) {
           return (
             <button
-              key={cat}
+              key={cat.slug}
               className={`category-bar__pill ${isActive ? 'category-bar__pill--active' : ''}`}
               data-testid="category-pill"
               data-active={String(isActive)}
-              onClick={() => onSelect(isActive ? null : cat)}
+              onClick={() => onSelect(isActive ? null : cat.slug)}
               type="button"
             >
-              {cat}
+              {cat.label}
             </button>
           );
         }
 
         return (
           <Link
-            key={cat}
-            href={`/category/${slug}`}
+            key={cat.slug}
+            href={`/category/${cat.slug}`}
             className={`category-bar__pill ${isActive ? 'category-bar__pill--active' : ''}`}
             data-testid="category-pill"
             data-active={String(isActive)}
           >
-            {cat}
+            {cat.label}
           </Link>
         );
       })}

@@ -5,12 +5,13 @@ import { GifGrid } from '@/components/gif/GifGrid';
 import { CategoryBar } from '@/components/gif/CategoryBar';
 import { LoadMore } from '@/components/gif/LoadMore';
 import type { KlipyGif, KlipyAd, KlipyPage } from '@/lib/klipy/types';
+import type { CategoryItem } from '@/components/gif/CategoryBar';
 
 interface HomeClientProps {
   initialGifs: KlipyGif[];
   initialAds: KlipyAd[];
   initialHasNext: boolean;
-  categories: string[];
+  categories: CategoryItem[];
 }
 
 export function HomeClient({ initialGifs, initialAds, initialHasNext, categories }: HomeClientProps) {

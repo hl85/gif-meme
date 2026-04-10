@@ -1,6 +1,7 @@
 import { CategoryClient } from '@/components/gif/CategoryClient';
 import { CategoryBar } from '@/components/gif/CategoryBar';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
+import type { CategoryItem } from '@/components/gif/CategoryBar';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
@@ -135,9 +136,32 @@ async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>>
   }
 }
 
-async function fetchCategories(): Promise<string[]> {
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
+}
+
+async function fetchCategories(): Promise<CategoryItem[]> {
   try {
+    // First try to get categories from database
     const { env } = await getCloudflareContext({ async: true });
+    const db = getDbFromEnv(env as unknown as { main_db?: D1Database; 'main-db'?: D1Database });
+    if (db) {
+      const dbCategories = await db
+        .select({
+          slug: categories.slug,
+          label: categories.label,
+        })
+        .from(categories)
+        .where(eq(categories.isActive, 1))
+        .orderBy(asc(categories.sortOrder));
+      
+      return dbCategories;
+    }
+
+    // Fallback to API if no database connection
     const provider = getProvider(env as unknown as Record<string, unknown>);
     if (!provider) return [];
     const data = await provider.categories() as Record<string, unknown>;
@@ -146,9 +170,14 @@ async function fetchCategories(): Promise<string[]> {
     return raw
       .map((c: unknown) => {
         const cat = c as Record<string, unknown>;
-        return String(cat.name || cat.title || cat.category || '');
+        const label = String(cat.name || cat.title || cat.category || '');
+        if (!label) return null;
+        return {
+          slug: slugify(label),
+          label,
+        };
       })
-      .filter(Boolean)
+      .filter((item): item is CategoryItem => item !== null)
       .slice(0, 20);
   } catch {
     return [];
@@ -190,7 +219,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <header className="category-page__header">
         <h1 className="category-page__title">{categoryName} GIFs</h1>
       </header>
-      <CategoryBar categories={categories} selected={categoryName} />
+      <CategoryBar categories={categories} selected={slug} />
       <CategoryClient
         categoryName={categoryName}
         initialGifs={mergedGifs}
