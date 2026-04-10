@@ -1,8 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { notFound } from 'next/navigation';
 
 vi.mock('next/navigation', () => ({
   notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND'); }),
+}));
+
+const mockKV = {
+  get: vi.fn(),
+  put: vi.fn(),
+};
+
+const mockCloudflareEnv = {
+  env: {
+    KLIPY_API_KEY: 'test_key',
+    cache: mockKV,
+  },
+};
+
+vi.mock('@opennextjs/cloudflare', () => ({
+  getCloudflareContext: () => Promise.resolve(mockCloudflareEnv),
 }));
 
 const mockFetch = vi.fn();
@@ -16,8 +31,10 @@ async function renderPage(params: { slug: string }) {
 describe('CategoryPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockFetch.mockImplementation((url) => {
-      if (url.includes('/api/gifs/categories')) {
+    mockKV.get.mockResolvedValue(null);
+    mockKV.put.mockResolvedValue(undefined);
+    mockFetch.mockImplementation((url: string) => {
+      if (typeof url === 'string' && url.includes('/categories')) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ data: { data: [{ name: 'Funny Cats' }] } }),
@@ -26,11 +43,20 @@ describe('CategoryPage', () => {
       return Promise.resolve({
         ok: true,
         json: () => Promise.resolve({
-          items: [],
-          ads: [],
-          page: 1,
-          perPage: 20,
-          hasNext: false,
+          data: {
+            data: [
+              {
+                id: 1,
+                title: 'Test GIF',
+                slug: 'test-gif',
+                type: 'gif',
+                file: {
+                  hd: { gif: { url: 'https://example.com/test.gif', width: 200, height: 200, size: 1000 } },
+                  sm: { gif: { url: 'https://example.com/test-sm.gif', width: 100, height: 100, size: 500 } },
+                },
+              },
+            ],
+          },
         }),
       });
     });
@@ -45,7 +71,7 @@ describe('CategoryPage', () => {
     const result = await renderPage({ slug: 'funny-cats' });
     expect(result).toBeDefined();
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('q=Funny%20Cats'),
+      expect.stringContaining('q=Funny+Cats'),
       expect.any(Object)
     );
   });
@@ -53,13 +79,13 @@ describe('CategoryPage', () => {
   it('formats category name correctly', async () => {
     await renderPage({ slug: 'trending-memes-2025' });
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('q=Trending%20Memes%202025'),
+      expect.stringContaining('q=Trending+Memes+2025'),
       expect.any(Object)
     );
   });
 
   it('handles fetch failure gracefully', async () => {
-    mockFetch.mockRejectedValue(new Error('API down'));
+    mockFetch.mockImplementation(() => Promise.reject(new Error('API down')));
     const result = await renderPage({ slug: 'funny-cats' });
     expect(result).toBeDefined();
   });

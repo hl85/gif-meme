@@ -6,7 +6,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { categories, categoryCards } from '@/lib/db/schema';
 import { mergeCategoryCards, type CategoryCardForMerge } from '@/lib/categories/merge';
-import { toAppUrl } from '@/lib/runtime/base-url';
+import { KlipyProvider } from '@/lib/klipy/provider';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -116,13 +116,19 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
+function getProvider(env: Record<string, unknown>): KlipyProvider | null {
+  const apiKey = env.KLIPY_API_KEY as string | undefined;
+  const kv = env.cache as KVNamespace | undefined;
+  if (!apiKey || !kv) return null;
+  return new KlipyProvider(apiKey, kv);
+}
+
 async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>> {
   try {
-    const res = await fetch(toAppUrl(`/api/gifs/search?q=${encodeURIComponent(category)}&page=1`), {
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error('fetch failed');
-    return res.json();
+    const { env } = await getCloudflareContext({ async: true });
+    const provider = getProvider(env as unknown as Record<string, unknown>);
+    if (!provider) return { items: [], ads: [], page: 1, perPage: 20, hasNext: false };
+    return await provider.search(category, 1, 20);
   } catch (error) {
     console.error('Error fetching category GIFs:', error);
     return { items: [], ads: [], page: 1, perPage: 20, hasNext: false };
@@ -131,11 +137,10 @@ async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>>
 
 async function fetchCategories(): Promise<string[]> {
   try {
-    const res = await fetch(toAppUrl('/api/gifs/categories'), {
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error('fetch failed');
-    const data = await res.json() as Record<string, unknown>;
+    const { env } = await getCloudflareContext({ async: true });
+    const provider = getProvider(env as unknown as Record<string, unknown>);
+    if (!provider) return [];
+    const data = await provider.categories() as Record<string, unknown>;
     const nested = (data?.data as Record<string, unknown> | undefined)?.data;
     const raw: unknown[] = Array.isArray(nested) ? nested : Array.isArray(data?.data) ? (data.data as unknown[]) : [];
     return raw

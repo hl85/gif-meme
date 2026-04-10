@@ -1,6 +1,7 @@
 import { HomeClient } from '@/components/gif/HomeClient';
 import type { KlipyPage, KlipyGif } from '@/lib/klipy/types';
-import { toAppUrl } from '@/lib/runtime/base-url';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { KlipyProvider } from '@/lib/klipy/provider';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,13 +9,19 @@ export const metadata: Metadata = {
   description: 'Discover and share the best trending GIFs and stickers on GifMeme.',
 };
 
+function getProvider(env: Record<string, unknown>): KlipyProvider | null {
+  const apiKey = env.KLIPY_API_KEY as string | undefined;
+  const kv = env.cache as KVNamespace | undefined;
+  if (!apiKey || !kv) return null;
+  return new KlipyProvider(apiKey, kv);
+}
+
 async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
   try {
-    const res = await fetch(toAppUrl('/api/gifs/trending?page=1'), {
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error('fetch failed');
-    return res.json();
+    const { env } = await getCloudflareContext({ async: true });
+    const provider = getProvider(env as unknown as Record<string, unknown>);
+    if (!provider) return { items: [], ads: [], page: 1, perPage: 20, hasNext: false };
+    return await provider.trending(1, 20);
   } catch {
     return { items: [], ads: [], page: 1, perPage: 20, hasNext: false };
   }
@@ -22,11 +29,10 @@ async function fetchTrending(): Promise<KlipyPage<KlipyGif>> {
 
 async function fetchCategories(): Promise<string[]> {
   try {
-    const res = await fetch(toAppUrl('/api/gifs/categories'), {
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error('fetch failed');
-    const data = await res.json() as Record<string, unknown>;
+    const { env } = await getCloudflareContext({ async: true });
+    const provider = getProvider(env as unknown as Record<string, unknown>);
+    if (!provider) return [];
+    const data = await provider.categories() as Record<string, unknown>;
     const nested = (data?.data as Record<string, unknown> | undefined)?.data;
     const raw: unknown[] = Array.isArray(nested) ? nested : Array.isArray(data?.data) ? (data.data as unknown[]) : [];
     return raw
