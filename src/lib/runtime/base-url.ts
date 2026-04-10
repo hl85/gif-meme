@@ -14,6 +14,19 @@ export function getLocalPort() {
 }
 
 export function getAppBaseUrl() {
+  // Prefer runtime-only env vars (not inlined by Next.js webpack at build time).
+  // NEXT_PUBLIC_* vars are replaced with literal strings during `next build`,
+  // so they can't be overridden by Cloudflare Worker secrets at runtime.
+  const runtimeBaseUrl = process.env.APP_BASE_URL?.trim();
+  if (runtimeBaseUrl) {
+    return trimTrailingSlash(runtimeBaseUrl);
+  }
+
+  const runtimeAppUrl = process.env.APP_URL?.trim();
+  if (runtimeAppUrl) {
+    return trimTrailingSlash(runtimeAppUrl);
+  }
+
   const configuredBaseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim();
   if (configuredBaseUrl) {
     return trimTrailingSlash(configuredBaseUrl);
@@ -28,6 +41,16 @@ export function getAppBaseUrl() {
 }
 
 export function getCanonicalBaseUrl() {
+  const runtimeBaseUrl = process.env.APP_BASE_URL?.trim();
+  if (runtimeBaseUrl) {
+    return trimTrailingSlash(runtimeBaseUrl);
+  }
+
+  const runtimeAppUrl = process.env.APP_URL?.trim();
+  if (runtimeAppUrl) {
+    return trimTrailingSlash(runtimeAppUrl);
+  }
+
   const configuredBaseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim();
   if (configuredBaseUrl) {
     return trimTrailingSlash(configuredBaseUrl);
