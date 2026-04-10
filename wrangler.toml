@@ -17,11 +17,13 @@ routes = [
 [[d1_databases]]
 binding = "main-db"
 database_name = "gifmeme-db"
-database_id = "placeholder-will-be-replaced-on-deploy"
+database_id = "ca0e6dd0-8b5b-40c3-985a-08110ed426bd"
 
 [[kv_namespaces]]
 binding = "cache"
-id = "placeholder-will-be-replaced-on-deploy"
+id = "7639311b729943dcb6d3a6cff8bcabea"
 
-[[analytics_engine_datasets]]
-binding = "gifmeme-analytics"
+# Uncomment after enabling Analytics Engine in Cloudflare Dashboard:
+# https://dash.cloudflare.com/639eb17ede2412f9933614707f8ed805/workers/analytics-engine
+# [[analytics_engine_datasets]]
+# binding = "gifmeme-analytics"
