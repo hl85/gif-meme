@@ -1,11 +1,10 @@
-INSERT OR IGNORE INTO categories (slug, label, search_query, seo_title, seo_description, seo_keywords, sort_order, is_active) VALUES
-('cat-memes', 'Cat Memes', 'cat meme', 'Cat Memes & GIFs', 'Discover the funniest cat memes, cat GIFs, and cute cat stickers. Perfect for sharing on social media.', 'cat meme, cat gif, funny cats, cat stickers, cute cats, kitten memes', 0, 1),
-('funny-gifs', 'Funny', 'funny', 'Funny GIFs & Memes', 'Browse hilarious funny GIFs, comedy memes, and humor stickers. Make your friends laugh!', 'funny gif, humor, comedy, hilarious memes, laugh, jokes', 1, 1),
-('cute-stickers', 'Cute', 'cute', 'Cute Stickers & GIFs', 'Adorable cute stickers, kawaii GIFs, and sweet memes. Express your emotions with cuteness!', 'cute gif, adorable, kawaii, sweet stickers, cute memes', 2, 1),
-('dog-memes', 'Dog Memes', 'dog meme', 'Dog Memes & GIFs', 'Funny dog memes, puppy GIFs, and adorable dog stickers. Dog lovers paradise!', 'dog meme, dog gif, puppy, funny dogs, dog stickers, pet memes', 3, 1),
-('happy-gifs', 'Happy', 'happy', 'Happy GIFs & Celebration Memes', 'Spread joy with happy GIFs, celebration memes, and cheerful stickers. Perfect for good news!', 'happy gif, joy, celebration, cheerful, excited, party', 4, 1),
-('love-stickers', 'Love', 'love', 'Love Stickers & Romantic GIFs', 'Express love with romantic GIFs, heart stickers, and love memes. Perfect for your special someone!', 'love gif, heart, romance, romantic stickers, valentine, affection', 5, 1),
-('sad-memes', 'Sad', 'sad', 'Sad Memes & Emotional GIFs', 'Relatable sad memes, crying GIFs, and emotional stickers. Express your feelings.', 'sad gif, crying, emotional, tears, feelings, mood', 6, 1),
-('excited-gifs', 'Excited', 'excited', 'Excited GIFs & Hype Memes', 'Show your excitement with hype GIFs, energetic memes, and enthusiastic stickers!', 'excited gif, hype, energy, enthusiastic, pumped, thrilled', 7, 1),
-('dance-gifs', 'Dance', 'dance', 'Dance GIFs & Dancing Memes', 'Get grooving with dance GIFs, dancing memes, and party stickers. Feel the rhythm!', 'dance gif, dancing, moves, party, groove, music', 8, 1),
-('meme-collection', 'Memes', 'meme', 'Trending Memes & Viral GIFs', 'Latest trending memes, viral GIFs, and popular stickers. Stay up-to-date with internet culture!', 'meme, viral, trending, popular, internet culture, funny', 9, 1);
+INSERT OR IGNORE INTO categories (id, slug, label, search_query, seo_title, seo_description, seo_keywords, sort_order, is_active) VALUES
+('cat-001', 'cat', 'Cat', 'cat', 'Cat GIFs & Memes', 'Discover the best cat GIFs and cat memes. Perfect for sharing your favorite feline moments.', 'cat, cat gif, cat memes, feline, kitty, kitten', 1, 1),
+('dog-001', 'dog', 'Dog', 'dog', 'Dog GIFs & Memes', 'Find funny dog GIFs and adorable dog memes. Great for dog lovers everywhere.', 'dog, dog gif, dog memes, puppy, pet, doggo', 2, 1),
+('funny-001', 'funny', 'Funny', 'funny', 'Funny GIFs & Memes', 'Browse hilarious funny GIFs and comedy memes. Make everyone laugh with these humor gems.', 'funny, funny gif, comedy, memes, humor, laugh', 3, 1),
+('cute-001', 'cute', 'Cute', 'cute', 'Cute GIFs & Memes', 'Adorable cute GIFs and sweet memes. Express yourself with the cutest content online.', 'cute, cute gif, adorable, kawaii, sweet, lovely', 4, 1),
+('happy-001', 'happy', 'Happy', 'happy', 'Happy GIFs & Memes', 'Spread joy with happy GIFs and cheerful memes. Perfect for celebrating good news.', 'happy, happy gif, joy, cheerful, celebration, positive', 5, 1),
+('love-001', 'love', 'Love', 'love', 'Love GIFs & Memes', 'Express your feelings with romantic love GIFs and heartwarming memes.', 'love, love gif, romance, heart, romantic, affection', 6, 1),
+('sad-001', 'sad', 'Sad', 'sad', 'Sad GIFs & Memes', 'Relatable sad GIFs and emotional memes. Express your mood when you are feeling down.', 'sad, sad gif, emotional, feelings, mood, crying', 7, 1),
+('excited-001', 'excited', 'Excited', 'excited', 'Excited GIFs & Memes', 'Show your excitement with energetic excited GIFs and hype memes.', 'excited, excited gif, hype, energy, pumped, enthusiastic', 8, 1),
+('dance-001', 'dance', 'Dance', 'dance', 'Dance GIFs & Memes', 'Get grooving with dance GIFs and dancing memes. Feel the rhythm and share the move.', 'dance, dance gif, dancing, moves, groove, party', 9, 1);

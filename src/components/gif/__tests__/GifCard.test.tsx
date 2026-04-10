@@ -38,18 +38,6 @@ describe('GifCard', () => {
     expect(screen.getByTestId('gif-card')).toBeInTheDocument();
   });
 
-  it('calls onClick handler when clicked', () => {
-    const handleClick = vi.fn();
-    render(<GifCard gif={mockGif} onClick={handleClick} />);
-    fireEvent.click(screen.getByTestId('gif-card'));
-    expect(handleClick).toHaveBeenCalledWith(mockGif);
-  });
-
-  it('does not throw if onClick is not provided', () => {
-    render(<GifCard gif={mockGif} />);
-    expect(() => fireEvent.click(screen.getByTestId('gif-card'))).not.toThrow();
-  });
-
   it('applies custom className', () => {
     render(<GifCard gif={mockGif} className="my-custom-class" />);
     const card = screen.getByTestId('gif-card');

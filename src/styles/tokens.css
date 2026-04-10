@@ -21,6 +21,12 @@
   --accent:        #22c55e;
   --color-heading: #3ddc84;
 
+  /* --- Color cycle for category pills (5-colors) --- */
+  --chart-2: #0ea5e9;   /* cyan */
+  --chart-3: #eab308;   /* yellow */
+  --chart-4: #8b5cf6;   /* purple */
+  --chart-5: #f59e0b;   /* orange */
+
   /* --- Status levels — text colors --- */
   --status-1: #16a34a;
   --status-2: #22c55e;
@@ -97,6 +103,12 @@
   /* Brand accent and heading stay vivid in dark mode */
   --accent:        #22c55e;
   --color-heading: #3ddc84;
+
+  /* Color cycle for category pills (5-colors) - keep same vivid colors */
+  --chart-2: #0ea5e9;   /* cyan */
+  --chart-3: #eab308;   /* yellow */
+  --chart-4: #8b5cf6;   /* purple */
+  --chart-5: #f59e0b;   /* orange */
 
   /* Status badge backgrounds — darkened for dark mode legibility */
   --status-1-bg: #052e16;

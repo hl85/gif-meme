@@ -305,9 +305,101 @@ ol {
   background-color: var(--bg-subtle);
 }
 
-@media (max-width: 640px) {
+ @media (max-width: 640px) {
   .site-header__login-button {
     display: none;
+  }
+}
+
+/* ---- Avatar Dropdown ---- */
+
+.site-header__avatar-dropdown {
+  position: relative;
+  margin-inline-start: var(--space-2);
+  flex-shrink: 0;
+}
+
+.site-header__avatar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-default);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+  background-color: var(--accent);
+}
+
+.site-header__avatar-button:hover {
+  border-color: var(--accent);
+}
+
+.site-header__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.site-header__avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #000;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: var(--font-mono);
+}
+
+.site-header__dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  min-width: 160px;
+  padding: var(--space-1);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.site-header__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  cursor: pointer;
+}
+
+.site-header__dropdown-item:hover {
+  background-color: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent);
+}
+
+.site-header__dropdown-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.site-header__dropdown-item--button {
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .site-header__avatar-dropdown {
+    margin-inline-start: var(--space-1);
   }
 }
 
@@ -777,9 +869,77 @@ ol {
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
+.category-bar__prefix {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: var(--space-1) 0;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-right: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* 5-color cycle for category pills */
+.category-bar__pill--color-0 {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border-default));
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.category-bar__pill--color-0:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.category-bar__pill--color-1 {
+  border-color: color-mix(in srgb, var(--chart-2) 40%, var(--border-default));
+  color: var(--chart-2);
+  background: color-mix(in srgb, var(--chart-2) 6%, transparent);
+}
+
+.category-bar__pill--color-1:hover {
+  border-color: var(--chart-2);
+  background: color-mix(in srgb, var(--chart-2) 10%, transparent);
+}
+
+.category-bar__pill--color-2 {
+  border-color: color-mix(in srgb, var(--chart-3) 40%, var(--border-default));
+  color: var(--chart-3);
+  background: color-mix(in srgb, var(--chart-3) 6%, transparent);
+}
+
+.category-bar__pill--color-2:hover {
+  border-color: var(--chart-3);
+  background: color-mix(in srgb, var(--chart-3) 10%, transparent);
+}
+
+.category-bar__pill--color-3 {
+  border-color: color-mix(in srgb, var(--chart-4) 40%, var(--border-default));
+  color: var(--chart-4);
+  background: color-mix(in srgb, var(--chart-4) 6%, transparent);
+}
+
+.category-bar__pill--color-3:hover {
+  border-color: var(--chart-4);
+  background: color-mix(in srgb, var(--chart-4) 10%, transparent);
+}
+
+.category-bar__pill--color-4 {
+  border-color: color-mix(in srgb, var(--chart-5) 40%, var(--border-default));
+  color: var(--chart-5);
+  background: color-mix(in srgb, var(--chart-5) 6%, transparent);
+}
+
+.category-bar__pill--color-4:hover {
+  border-color: var(--chart-5);
+  background: color-mix(in srgb, var(--chart-5) 10%, transparent);
+}
+
 /* ====================================================================
-   GifGrid
-   ==================================================================== */
+    GifGrid
+    ==================================================================== */
 
 .gif-grid {
   display: grid;

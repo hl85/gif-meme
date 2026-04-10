@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTheme } from "./ThemeProvider";
 import { SearchInput } from "@/components/search/SearchInput";
@@ -24,8 +24,47 @@ export function Header({ session }: { session?: SessionPayload | null }) {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAuthenticated = !!session;
+
+  // Get first letter of email for avatar fallback
+  const getInitial = () => {
+    if (!session?.email) return "?";
+    return session.email[0].toUpperCase();
+  };
+
+  // Handle logout
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.reload();
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+      }
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [dropdownOpen]);
 
   return (
     <header className="site-header" role="banner">
@@ -57,17 +96,19 @@ export function Header({ session }: { session?: SessionPayload | null }) {
           ))}
         </nav>
 
-        <button
-          className="site-header__theme-toggle"
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-          title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-        >
+      <button
+        type="button"
+        className="site-header__theme-toggle"
+        onClick={toggleTheme}
+        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      >
           {theme === "light" ? "◑" : "◐"}
         </button>
 
         {!isAuthenticated && (
           <button
+            type="button"
             className="site-header__login-button"
             onClick={() => setLoginDialogOpen(true)}
             aria-label="Sign in"
@@ -77,9 +118,57 @@ export function Header({ session }: { session?: SessionPayload | null }) {
           </button>
         )}
 
+        {isAuthenticated && (
+          <div className="site-header__avatar-dropdown" ref={dropdownRef}>
+            <button
+              type="button"
+              className="site-header__avatar-button"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              aria-expanded={dropdownOpen}
+              aria-label="Open user menu"
+            >
+              {session.avatarUrl ? (
+                <img
+                  src={session.avatarUrl}
+                  alt=""
+                  className="site-header__avatar-img"
+                />
+              ) : (
+                <div className="site-header__avatar-fallback">
+                  {getInitial()}
+                </div>
+              )}
+            </button>
+
+            {dropdownOpen && (
+              <div className="site-header__dropdown-menu">
+                <Link
+                  href="/favorites"
+                  className="site-header__dropdown-item"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <span className="site-header__dropdown-icon">❤️</span>
+                  My Favorites
+                </Link>
+                <button
+                  type="button"
+                  className="site-header__dropdown-item site-header__dropdown-item--button"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    handleLogout();
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         <LoginDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen} />
 
         <button
+          type="button"
           className="site-header__mobile-toggle"
           data-testid="mobile-menu-toggle"
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}

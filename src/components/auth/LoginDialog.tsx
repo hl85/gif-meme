@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { createPortal } from "react-dom";
+import { Logo } from "@/components/brand/Logo";
 import styles from "./LoginDialog.module.css";
 
 const FOCUSABLE_SELECTOR = [
@@ -141,6 +142,9 @@ export function LoginDialog({
         </div>
 
         <div className={styles.body}>
+          <div className={styles.logoContainer}>
+            <Logo size={48} />
+          </div>
           <h2 id={titleId} className={styles.title}>
             {title}
           </h2>

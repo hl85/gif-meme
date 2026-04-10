@@ -1,25 +1,17 @@
+import Link from 'next/link';
 import type { KlipyGif } from '@/lib/klipy/types';
 
 interface GifCardProps {
   gif: KlipyGif;
-  onClick?: (gif: KlipyGif) => void;
   className?: string;
 }
 
-export function GifCard({ gif, onClick, className = '' }: GifCardProps) {
+export function GifCard({ gif, className = '' }: GifCardProps) {
   return (
-    <div
+    <Link
+      href={`/gif/${gif.id}`}
       className={`gif-card ${className}`}
       data-testid="gif-card"
-      onClick={() => onClick?.(gif)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onClick?.(gif);
-        }
-      }}
     >
       <div className="gif-card__media">
         <img
@@ -34,6 +26,6 @@ export function GifCard({ gif, onClick, className = '' }: GifCardProps) {
           <span className="gif-card__title">{gif.title}</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

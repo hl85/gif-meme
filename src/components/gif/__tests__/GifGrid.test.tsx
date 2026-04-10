@@ -75,12 +75,7 @@ describe('GifGrid', () => {
     expect(screen.getByTestId('mock-ad-slot-11')).toBeInTheDocument();
   });
 
-  it('calls onGifClick when a gif card is clicked', () => {
-    const handleClick = vi.fn();
-    const gifs = [makeGif(1)];
-    render(<GifGrid gifs={gifs} ads={[]} onGifClick={handleClick} />);
-    expect(screen.getByTestId('mock-gif-card-gif-1')).toBeInTheDocument();
-  });
+
 
   it('renders share buttons for each gif card', () => {
     const gifs = [makeGif(1)];

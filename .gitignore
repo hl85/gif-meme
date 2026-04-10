@@ -147,3 +147,8 @@ test-results*/
 # Playwright MCP artifacts
 .playwright-mcp/
 screenshots/
+
+.opencode/
+.sisyphus/
+
+

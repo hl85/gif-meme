@@ -9,7 +9,6 @@ import type { KlipyGif, KlipyAd } from '@/lib/klipy/types';
 interface GifGridProps {
   gifs: KlipyGif[];
   ads: KlipyAd[];
-  onGifClick?: (gif: KlipyGif) => void;
   adFrequency?: number;
 }
 
@@ -50,7 +49,7 @@ function ImageIcon() {
   );
 }
 
-export function GifGrid({ gifs, ads, onGifClick, adFrequency = 12 }: GifGridProps) {
+export function GifGrid({ gifs, ads, adFrequency = 12 }: GifGridProps) {
   const [copiedTarget, setCopiedTarget] = useState<CopiedTarget | null>(null);
   const feedbackTimeoutRef = useRef<number | null>(null);
 
@@ -98,7 +97,7 @@ export function GifGrid({ gifs, ads, onGifClick, adFrequency = 12 }: GifGridProp
         gifs.map((gif, index) => (
           <div key={gif.id} className="gif-grid__cell">
             <div className="gif-grid__card-wrap">
-              <GifCard gif={gif} onClick={onGifClick} />
+              <GifCard gif={gif} />
               <div className="gif-grid__share-overlay">
                 <span className="gif-grid__share-feedback" aria-live="polite">
                   {copiedTarget?.gifId === gif.id ? 'Copied!' : ''}
