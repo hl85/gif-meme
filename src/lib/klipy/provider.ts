@@ -45,10 +45,19 @@ export class KlipyProvider {
       return {
         data: {
           data: [
-            { id: 'mock1', title: 'Mock GIF', url: 'https://example.com/mock.gif', preview_url: 'https://example.com/mock.gif', width: 200, height: 200 },
-            { is_ad: true, id: 'ad1', image_url: 'https://example.com/ad.png', click_url: 'https://example.com/click', width: 300, height: 250 }
-          ]
-        }
+            {
+              id: 1,
+              title: 'Mock GIF',
+              slug: 'mock-gif',
+              type: 'gif',
+              file: {
+                hd: { gif: { url: 'https://example.com/mock.gif', width: 200, height: 200, size: 1000 } },
+                sm: { gif: { url: 'https://example.com/mock-sm.gif', width: 100, height: 100, size: 500 } },
+              },
+            },
+            { is_ad: true, id: 'ad1', image_url: 'https://example.com/ad.png', click_url: 'https://example.com/click', width: 300, height: 250 },
+          ],
+        },
       } as T;
     }
 

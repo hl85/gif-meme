@@ -1,8 +1,17 @@
+export interface KlipyFileVariant {
+  url: string;
+  width: number;
+  height: number;
+  size?: number;
+}
+
 export interface KlipyGif {
   id: string;
   title: string;
+  slug?: string;
   url: string;
   preview_url: string;
+  blur_preview?: string;
   width: number;
   height: number;
   source: string;
