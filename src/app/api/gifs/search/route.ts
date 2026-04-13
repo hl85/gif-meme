@@ -4,15 +4,14 @@ import { KlipyProvider } from '@/lib/klipy/provider';
 
 export async function GET(request: NextRequest) {
   try {
-    const { env } = await getCloudflareContext();
+    const { env } = getCloudflareContext();
     const apiKey = env.KLIPY_API_KEY as string;
-    const kv = env.cache as KVNamespace;
 
-    if (!apiKey || !kv) {
+    if (!apiKey) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
-    const provider = new KlipyProvider(apiKey, kv);
+    const provider = new KlipyProvider(apiKey);
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q');
     const page = parseInt(searchParams.get('page') || '1', 10);

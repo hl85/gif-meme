@@ -119,9 +119,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 function getProvider(env: Record<string, unknown>): KlipyProvider | null {
   const apiKey = env.KLIPY_API_KEY as string | undefined;
-  const kv = env.cache as KVNamespace | undefined;
-  if (!apiKey || !kv) return null;
-  return new KlipyProvider(apiKey, kv);
+  if (!apiKey) return null;
+  return new KlipyProvider(apiKey);
 }
 
 async function fetchCategoryGifs(category: string): Promise<KlipyPage<KlipyGif>> {

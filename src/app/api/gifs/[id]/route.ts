@@ -8,15 +8,14 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params;
-    const { env } = await getCloudflareContext();
+    const { env } = getCloudflareContext();
     const apiKey = env.KLIPY_API_KEY as string;
-    const kv = env.cache as KVNamespace;
 
-    if (!apiKey || !kv) {
+    if (!apiKey) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
-    const provider = new KlipyProvider(apiKey, kv);
+    const provider = new KlipyProvider(apiKey);
     const customerId = request.cookies.get('visitor_id')?.value;
 
     const data = await provider.getById(resolvedParams.id, customerId);

@@ -15,9 +15,8 @@ export const metadata: Metadata = {
 
 function getProvider(env: Record<string, unknown>): KlipyProvider | null {
   const apiKey = env.KLIPY_API_KEY as string | undefined;
-  const kv = env.cache as KVNamespace | undefined;
-  if (!apiKey || !kv) return null;
-  return new KlipyProvider(apiKey, kv);
+  if (!apiKey) return null;
+  return new KlipyProvider(apiKey);
 }
 
 function getDbFromEnv(env: { main_db?: D1Database; 'main-db'?: D1Database }) {

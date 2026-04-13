@@ -1,14 +1,14 @@
 import { KlipyPage, KlipyGif } from './types';
 import { parseKlipyData } from './ad-parser';
+import { fetchWithCacheApi } from '@/lib/cache/cache-api';
+import { CACHE_TTL } from '@/lib/cache/ttl-config';
 
 export class KlipyProvider {
   private apiKey: string;
-  private kv: KVNamespace;
   private baseUrl = 'https://api.klipy.com/api/v1';
 
-  constructor(apiKey: string, kvNamespace: KVNamespace) {
+  constructor(apiKey: string) {
     this.apiKey = apiKey;
-    this.kv = kvNamespace;
   }
 
   private async fetchWithCache<T>(
@@ -26,12 +26,6 @@ export class KlipyProvider {
     }
 
     const url = `${this.baseUrl}/${this.apiKey}${endpoint}?${searchParams.toString()}`;
-    const cacheKey = `klipy:${endpoint}:${searchParams.toString()}`;
-
-    const cached = await this.kv.get(cacheKey);
-    if (cached) {
-      return JSON.parse(cached) as T;
-    }
 
     const headers: Record<string, string> = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -61,14 +55,17 @@ export class KlipyProvider {
       } as T;
     }
 
-    const response = await fetch(url, { headers });
+    const request = new Request(url, {
+      method: 'GET',
+      headers,
+    });
+
+    const response = await fetchWithCacheApi(request, ttlSeconds);
     if (!response.ok) {
       throw new Error(`Klipy API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    
-    await this.kv.put(cacheKey, JSON.stringify(data), { expirationTtl: ttlSeconds });
 
     return data as T;
   }
@@ -87,22 +84,22 @@ export class KlipyProvider {
   }
 
   async trending(page: number = 1, perPage: number = 20, customerId?: string): Promise<KlipyPage<KlipyGif>> {
-    const data = await this.fetchWithCache<any>('/gifs/trending', { page, per_page: perPage }, 300, customerId);
+    const data = await this.fetchWithCache<any>('/gifs/trending', { page, per_page: perPage }, CACHE_TTL.trending, customerId);
     return this.formatPageResponse(data, page, perPage);
   }
 
   async search(query: string, page: number = 1, perPage: number = 20, customerId?: string): Promise<KlipyPage<KlipyGif>> {
-    const data = await this.fetchWithCache<any>('/gifs/search', { q: query, page, per_page: perPage }, 600, customerId);
+    const data = await this.fetchWithCache<any>('/gifs/search', { q: query, page, per_page: perPage }, CACHE_TTL.search, customerId);
     return this.formatPageResponse(data, page, perPage);
   }
 
   async categories(customerId?: string): Promise<any> {
-    return this.fetchWithCache<any>('/gifs/categories', {}, 3600, customerId);
+    return this.fetchWithCache<any>('/gifs/categories', {}, CACHE_TTL.categories, customerId);
   }
 
   async getById(id: string, customerId?: string): Promise<KlipyGif | null> {
     try {
-      const data = await this.fetchWithCache<any>(`/gifs/${id}`, {}, 3600, customerId);
+      const data = await this.fetchWithCache<any>(`/gifs/${id}`, {}, CACHE_TTL.detail, customerId);
       const { items } = parseKlipyData([data?.data || data]);
       return items.length > 0 ? items[0] : null;
     } catch (e) {
@@ -111,12 +108,12 @@ export class KlipyProvider {
   }
 
   async trendingStickers(page: number = 1, perPage: number = 20, customerId?: string): Promise<KlipyPage<KlipyGif>> {
-    const data = await this.fetchWithCache<any>('/stickers/trending', { page, per_page: perPage }, 300, customerId);
+    const data = await this.fetchWithCache<any>('/stickers/trending', { page, per_page: perPage }, CACHE_TTL.stickers, customerId);
     return this.formatPageResponse(data, page, perPage);
   }
 
   async searchStickers(query: string, page: number = 1, perPage: number = 20, customerId?: string): Promise<KlipyPage<KlipyGif>> {
-    const data = await this.fetchWithCache<any>('/stickers/search', { q: query, page, per_page: perPage }, 600, customerId);
+    const data = await this.fetchWithCache<any>('/stickers/search', { q: query, page, per_page: perPage }, CACHE_TTL.search, customerId);
     return this.formatPageResponse(data, page, perPage);
   }
 }

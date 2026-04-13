@@ -18,9 +18,8 @@ export default async function EmbedGifPage({ params }: PageProps) {
   const { env } = await getCloudflareContext({ async: true });
 
   const apiKey = env.KLIPY_API_KEY as string;
-  const kv = env.cache as KVNamespace;
 
-  const gif = apiKey && kv ? await new KlipyProvider(apiKey, kv).getById(id) : null;
+  const gif = apiKey ? await new KlipyProvider(apiKey).getById(id) : null;
 
   return (
     <section className="embed-page" aria-label="Embedded GIF">

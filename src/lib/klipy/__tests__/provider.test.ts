@@ -23,15 +23,18 @@ function makeKlipyItem(id: number, title: string, baseUrl: string) {
 }
 
 describe('KlipyProvider', () => {
-  let mockKV: any;
+  let mockCache: { match: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
   let provider: KlipyProvider;
 
   beforeEach(() => {
-    mockKV = {
-      get: vi.fn(),
+    mockCache = {
+      match: vi.fn(),
       put: vi.fn(),
     };
-    provider = new KlipyProvider('test-api-key', mockKV);
+    (globalThis as unknown as { caches: { default: Cache } }).caches = {
+      default: mockCache as unknown as Cache,
+    };
+    provider = new KlipyProvider('test-api-key');
     global.fetch = vi.fn();
   });
 
@@ -53,28 +56,23 @@ describe('KlipyProvider', () => {
       },
     };
 
-    mockKV.get.mockResolvedValueOnce(null);
-    (global.fetch as any).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockApiResponse,
-    });
+    mockCache.match.mockResolvedValueOnce(undefined);
+    (global.fetch as any).mockResolvedValueOnce(
+      new Response(JSON.stringify(mockApiResponse), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
 
     const result = await provider.trending(1, 20);
 
-    expect(mockKV.get).toHaveBeenCalledWith(expect.stringContaining('klipy:/gifs/trending'));
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('https://api.klipy.com/api/v1/test-api-key/gifs/trending'),
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          'User-Agent': expect.any(String),
-        }),
-      })
-    );
-    expect(mockKV.put).toHaveBeenCalledWith(
-      expect.stringContaining('klipy:/gifs/trending'),
-      JSON.stringify(mockApiResponse),
-      { expirationTtl: 300 }
-    );
+    expect(mockCache.match).toHaveBeenCalledTimes(1);
+    const fetchRequest = (global.fetch as any).mock.calls[0][0] as Request;
+    expect(fetchRequest.url).toContain('https://api.klipy.com/api/v1/test-api-key/gifs/trending');
+    expect(fetchRequest.headers.get('User-Agent')).toBeTruthy();
+    expect(mockCache.put).toHaveBeenCalledTimes(1);
+    const cachedResponse = mockCache.put.mock.calls[0][1] as Response;
+    expect(cachedResponse.headers.get('Cache-Control')).toBe('s-maxage=300');
 
     expect(result.items).toHaveLength(1);
     expect(result.ads).toHaveLength(1);
@@ -91,13 +89,18 @@ describe('KlipyProvider', () => {
       },
     };
 
-    mockKV.get.mockResolvedValueOnce(JSON.stringify(cachedData));
+    mockCache.match.mockResolvedValueOnce(
+      new Response(JSON.stringify(cachedData), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
 
     const result = await provider.trending(1, 20);
 
-    expect(mockKV.get).toHaveBeenCalled();
+    expect(mockCache.match).toHaveBeenCalled();
     expect(global.fetch).not.toHaveBeenCalled();
-    expect(mockKV.put).not.toHaveBeenCalled();
+    expect(mockCache.put).not.toHaveBeenCalled();
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].id).toBe('456');
