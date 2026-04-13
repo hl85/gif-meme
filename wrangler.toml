@@ -1,7 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 
 name = "gif-meme"
-main = ".open-next/worker.js"
+main = "src/lib/prewarm/worker-wrapper.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -22,6 +22,9 @@ database_id = "ca0e6dd0-8b5b-40c3-985a-08110ed426bd"
 [[kv_namespaces]]
 binding = "cache"
 id = "7639311b729943dcb6d3a6cff8bcabea"
+
+[triggers]
+crons = ["0 * * * *"]
 
 # Uncomment after enabling Analytics Engine in Cloudflare Dashboard:
 # https://dash.cloudflare.com/639eb17ede2412f9933614707f8ed805/workers/analytics-engine
