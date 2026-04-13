@@ -1,7 +1,7 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect, type Page } from '@playwright/test';
 
 test.describe('Production QA Tests', () => {
-  test('Test 1: CategoryBar shows 9 colored pills', async ({ page }) => {
+  test('Test 1: CategoryBar shows 9 colored pills', async ({ page }: { page: Page }) => {
     await page.goto('https://gifmeme.org');
     // Wait for category bar to load
     await page.waitForSelector('[data-testid="category-bar"]', { timeout: 10000 });
@@ -12,7 +12,7 @@ test.describe('Production QA Tests', () => {
     expect(count).toBe(9);
   });
 
-  test('Test 2: Click on a GIF card, should navigate to /gif/[id]', async ({ page }) => {
+  test('Test 2: Click on a GIF card, should navigate to /gif/[id]', async ({ page }: { page: Page }) => {
     await page.goto('https://gifmeme.org');
     await page.waitForSelector('[data-testid="gif-card"]', { timeout: 10000 });
     const gifCard = page.locator('[data-testid="gif-card"]').first();
@@ -24,7 +24,7 @@ test.describe('Production QA Tests', () => {
     expect(url).toMatch(/\/gif\/\d+$/);
   });
 
-  test('Test 3: Click Sign In, verify LoginDialog shows Logo', async ({ page }) => {
+  test('Test 3: Click Sign In, verify LoginDialog shows Logo', async ({ page }: { page: Page }) => {
     await page.goto('https://gifmeme.org');
     // Click Sign In
     const signInBtn = page.getByRole('button', { name: /sign in/i });
