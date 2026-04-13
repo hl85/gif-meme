@@ -1,9 +1,16 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import { CARRIED_GIF_DATA_KEY } from '@/lib/client/carry-gif-data';
 import { GifCard } from '../GifCard';
 import type { KlipyGif } from '@/lib/klipy/types';
+
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...props }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
+    <a href={href} {...props}>{children}</a>
+  ),
+}));
 
 const mockGif: KlipyGif = {
   id: 'gif-1',
@@ -17,6 +24,10 @@ const mockGif: KlipyGif = {
 
 afterEach(() => {
   cleanup();
+});
+
+beforeEach(() => {
+  window.sessionStorage.clear();
 });
 
 describe('GifCard', () => {
@@ -42,5 +53,13 @@ describe('GifCard', () => {
     render(<GifCard gif={mockGif} className="my-custom-class" />);
     const card = screen.getByTestId('gif-card');
     expect(card.className).toContain('my-custom-class');
+  });
+
+  it('stores gif data in sessionStorage before navigation', () => {
+    render(<GifCard gif={mockGif} />);
+
+    fireEvent.click(screen.getByTestId('gif-card'));
+
+    expect(window.sessionStorage.getItem(CARRIED_GIF_DATA_KEY)).toBe(JSON.stringify(mockGif));
   });
 });
