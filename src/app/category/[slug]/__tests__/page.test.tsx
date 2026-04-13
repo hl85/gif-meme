@@ -23,6 +23,18 @@ vi.mock('@opennextjs/cloudflare', () => ({
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
+function getRequestUrl(input: RequestInfo | URL): string {
+  if (typeof input === 'string') {
+    return input;
+  }
+
+  if (input instanceof Request) {
+    return input.url;
+  }
+
+  return input.toString();
+}
+
 async function renderPage(params: { slug: string }) {
   const { default: CategoryPage } = await import('../page');
   return CategoryPage({ params: Promise.resolve(params) });
@@ -33,8 +45,10 @@ describe('CategoryPage', () => {
     vi.clearAllMocks();
     mockKV.get.mockResolvedValue(null);
     mockKV.put.mockResolvedValue(undefined);
-    mockFetch.mockImplementation((url: string) => {
-      if (typeof url === 'string' && url.includes('/categories')) {
+    mockFetch.mockImplementation((input: RequestInfo | URL) => {
+      const url = getRequestUrl(input);
+
+      if (url.includes('/categories')) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ data: { data: [{ name: 'Funny Cats' }] } }),
@@ -63,25 +77,24 @@ describe('CategoryPage', () => {
   });
 
   it('calls notFound when slug is missing', async () => {
-    // @ts-ignore
     await expect(renderPage({ slug: '' })).rejects.toThrow('NEXT_NOT_FOUND');
   });
 
   it('renders correctly with a valid slug', async () => {
     const result = await renderPage({ slug: 'funny-cats' });
     expect(result).toBeDefined();
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('q=Funny+Cats'),
-      expect.any(Object)
-    );
+    expect(
+      mockFetch.mock.calls.some(([input]) => getRequestUrl(input as RequestInfo | URL).includes('q=Funny+Cats'))
+    ).toBe(true);
   });
 
   it('formats category name correctly', async () => {
     await renderPage({ slug: 'trending-memes-2025' });
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('q=Trending+Memes+2025'),
-      expect.any(Object)
-    );
+    expect(
+      mockFetch.mock.calls.some(([input]) =>
+        getRequestUrl(input as RequestInfo | URL).includes('q=Trending+Memes+2025')
+      )
+    ).toBe(true);
   });
 
   it('handles fetch failure gracefully', async () => {
