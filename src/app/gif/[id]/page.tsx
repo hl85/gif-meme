@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { eq, and } from 'drizzle-orm';
@@ -5,11 +6,23 @@ import { getSession } from '@/lib/auth/session';
 import { getDb } from '@/lib/db';
 import { favorites } from '@/lib/db/schema';
 import { KlipyProvider } from '@/lib/klipy/provider';
-import { FavoriteButton } from '@/components/gif/FavoriteButton';
-import { CopyUrlButton } from '@/components/gif/CopyUrlButton';
-import { EmbedCodeButton } from '@/components/gif/EmbedCodeButton';
 import { getCanonicalBaseUrl } from '@/lib/runtime/base-url';
 import type { Metadata } from 'next';
+import type { KlipyGif } from '@/lib/klipy/types';
+import { GifDetailClient } from './GifDetailClient';
+import { GifDetailContent } from './GifDetailContent';
+
+const getCachedGif = cache(async (id: string): Promise<KlipyGif | null> => {
+  const { env } = await getCloudflareContext({ async: true });
+  const apiKey = env.KLIPY_API_KEY as string;
+
+  if (!apiKey) {
+    return null;
+  }
+
+  const provider = new KlipyProvider(apiKey);
+  return provider.getById(id);
+});
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -19,14 +32,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   const { env } = await getCloudflareContext({ async: true });
   const apiKey = env.KLIPY_API_KEY as string;
-  const kv = env.cache as KVNamespace;
 
-  if (!apiKey || !kv) {
+  if (!apiKey) {
     return { title: 'GIF Detail — GifMeme' };
   }
 
-  const provider = new KlipyProvider(apiKey, kv);
-  const gif = await provider.getById(id);
+  const gif = await getCachedGif(id);
 
   if (!gif) {
     return { title: 'GIF Not Found — GifMeme' };
@@ -67,9 +78,8 @@ export default async function GifDetailPage({ params }: PageProps) {
   const { env } = await getCloudflareContext({ async: true });
 
   const apiKey = env.KLIPY_API_KEY as string;
-  const kv = env.cache as KVNamespace;
 
-  if (!apiKey || !kv) {
+  if (!apiKey) {
     return (
       <div className="gif-detail__error">
         <p>Service unavailable. Please try again later.</p>
@@ -77,8 +87,7 @@ export default async function GifDetailPage({ params }: PageProps) {
     );
   }
 
-  const provider = new KlipyProvider(apiKey, kv);
-  const gif = await provider.getById(id);
+  const gif = await getCachedGif(id);
 
   if (!gif) {
     notFound();
@@ -112,60 +121,20 @@ export default async function GifDetailPage({ params }: PageProps) {
   const embedUrl = `${baseUrl}/embed/${id}`;
 
   return (
-    <article className="gif-detail">
-      <div className="gif-detail__media">
-        <img
-          src={gif.url}
-          alt={gif.title || 'GIF'}
-          className="gif-detail__img"
-          width={gif.width}
-          height={gif.height}
-        />
-      </div>
-
-      <div className="gif-detail__info">
-        {gif.title && (
-          <h1 className="gif-detail__title">{gif.title}</h1>
-        )}
-
-        <div className="gif-detail__actions">
-          <FavoriteButton
-            initialFavorited={initialFavorited}
-            favoriteId={favoriteId}
-            itemType="gif"
-            itemId={id}
-            itemTitle={gif.title ?? null}
-            itemUrl={gif.url ?? null}
-            itemPreviewUrl={gif.preview_url ?? null}
-            isAuthenticated={isAuthenticated}
-          />
-
-          <EmbedCodeButton embedUrl={embedUrl} />
-
-          <CopyUrlButton
-            url={gif.url}
-            label="Copy GIF URL"
-            ariaLabel="Copy source GIF URL"
-          />
-        </div>
-
-        <dl className="gif-detail__meta">
-          <div className="gif-detail__meta-row">
-            <dt>Dimensions</dt>
-            <dd>{gif.width} × {gif.height}</dd>
-          </div>
-          {gif.source && (
-            <div className="gif-detail__meta-row">
-              <dt>Source</dt>
-              <dd>
-                <a href={gif.source} target="_blank" rel="noopener noreferrer">
-                  {gif.source}
-                </a>
-              </dd>
-            </div>
-          )}
-        </dl>
-      </div>
-    </article>
+    <GifDetailClient
+      id={id}
+      embedUrl={embedUrl}
+      initialFavorited={initialFavorited}
+      favoriteId={favoriteId}
+      isAuthenticated={isAuthenticated}
+    >
+      <GifDetailContent
+        gif={gif}
+        embedUrl={embedUrl}
+        initialFavorited={initialFavorited}
+        favoriteId={favoriteId}
+        isAuthenticated={isAuthenticated}
+      />
+    </GifDetailClient>
   );
 }
